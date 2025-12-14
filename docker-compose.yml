@@ -1,0 +1,63 @@
+services:
+
+  db:
+    image: mariadb
+
+    container_name: db
+
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
+
+    volumes:
+      - db_data:/var/lib/mysql
+
+    environment:
+      MYSQL_ROOT_PASSWORD: #your_root_password 
+      MYSQL_PASSWORD: #your_password
+      MYSQL_DATABASE: #your_database
+      MYSQL_USER: #your_user
+
+    restart: unless-stopped
+
+  nextcloud:
+    image: nextcloud
+
+    container_name: nextcloud
+
+    volumes:
+      - nextcloud_config:/var/www/html/config
+      - nextcloud_data:/var/www/html/data
+
+    environment:
+      MYSQL_PASSWORD: #your_password 
+      MYSQL_DATABASE: #your_database
+      MYSQL_USER: #your_user
+
+    ports:
+      - '8080:80'
+
+    restart: unless-stopped
+
+  onlyoffice:
+    image: onlyoffice/documentserver
+
+    container_name: onlyoffice
+
+    volumes:
+      - oo_data:/var/www/html/data
+      - oo_log:/var/log/onlyoffice
+
+    environment:
+      JWT_SECRET: "your_security_token"
+
+    ports:
+      - '8081:80'
+        
+    restart: unless-stopped
+
+
+volumes:
+  db_data:
+  nextcloud_config:
+  nextcloud_data:
+  oo_data:
+  oo_log:
